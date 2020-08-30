@@ -1,0 +1,25 @@
+.post__commentCard .ant-card-body {
+    padding-top: 0 !important;
+}
+
+.post__commentList {
+    max-height: 300px;
+    overflow: scroll;
+}
+
+.post__username {
+    display: inline-block;
+}
+
+.post__username span {
+    font-size: 12px;
+    font-weight: normal;
+    color: #aaa;
+    display: block;
+}
+
+.post__image {
+    object-fit: contain;
+    width: 100%;
+    padding-top: 20px;
+}
