@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Card, Avatar, Form, Button, Input, List, Spin, Row, Col } from "antd";
-import { EditOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Card, Avatar, Form, Button, Input, List, Spin } from "antd";
+import { CommentOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import InfiniteScroll from "react-infinite-scroller";
 import Comment from "./sub_components/Comment";
-import "../styles/Post.css";
+import moment from "moment";
+import "../styles/Scream.css";
 
-const fetchComments = callback =>
-    fetch(
-        "https://randomuser.me/api/?results=5&inc=name,gender,email,nat&noinfo"
-    )
-        .then(res => res.json())
-        .then(({ results }) => callback(results));
-
-function Post() {
+function Scream({ scream }) {
     let [comments, setComments] = useState([]);
     const [isLike, setIsLike] = useState(false);
-    const [likes, setLikes] = useState(0);
+    const [likes, setLikes] = useState(scream.likeCount);
     const [isLoading, setIsLoading] = useState(false);
 
     const onLike = () => {
@@ -40,16 +34,12 @@ function Post() {
 
     const handleInfiniteOnLoad = () => {
         setIsLoading(true);
-        fetchComments(data => {
-            comments = comments.concat(data);
-            setComments(comments);
-            setIsLoading(false);
-        });
+        // fetchComments(data => {
+        //     comments = comments.concat(data);
+        //     setComments(comments);
+        //     setIsLoading(false);
+        // });
     };
-
-    useEffect(() => {
-        fetchComments(results => setComments(results));
-    }, []);
 
     return (
         <div style={{ marginTop: 50 }}>
@@ -64,29 +54,32 @@ function Post() {
                     >
                         {likeBtn} {likes}
                     </span>,
-                    <EditOutlined key="edit" />,
+                    <span
+                        style={{
+                            width: "100%",
+                            display: "block",
+                        }}
+                    >
+                        <CommentOutlined
+                            style={{ fontSize: 20 }}
+                            key="comments"
+                        />{" "}
+                        {scream.commentCount}
+                    </span>,
                 ]}
             >
                 <Card.Meta
-                    avatar={
-                        <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                    }
+                    avatar={<Avatar src={scream.userImage} />}
                     title={
                         <p className="post__username">
-                            Username <span>46m</span>
+                            {scream.userHandle}{" "}
+                            <span>
+                                {moment(scream.createdAt).format("h:mmA")}
+                            </span>
                         </p>
                     }
                 />
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Perferendis mollitia autem tempora aliquid consequatur
-                reiciendis enim ipsam doloremque minus unde ratione voluptatum
-                accusantium repellat, maxime ullam iure, quaerat aspernatur
-                earum.
-                <img
-                    alt="example"
-                    src="https://firebasestorage.googleapis.com/v0/b/instagram-clone-d8660.appspot.com/o/images%2F106728543_3171219992957744_1917523241753468125_o.jpg?alt=media&token=e70e3416-b4cc-4dea-8f08-e6c8ce4a10be"
-                    className="post__image"
-                />
+                {scream.body}
             </Card>
             <Card
                 style={{
@@ -138,4 +131,4 @@ function Post() {
     );
 }
 
-export default Post;
+export default Scream;

@@ -1,0 +1,8 @@
+.formPost__upload,
+.formPost__upload > div {
+    width: 100%;
+}
+
+.formPost__upload > .ant-upload {
+    height: 30px;
+}

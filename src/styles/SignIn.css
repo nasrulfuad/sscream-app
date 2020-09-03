@@ -1,0 +1,25 @@
+.login {
+    height: 100vh;
+    display: "flex";
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(250, 250, 250);
+}
+
+.login__header {
+    position: relative;
+}
+
+.login__header > .login__headerBtn {
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.login__header > h1 {
+    text-align: center;
+}
+
+.login__forgot {
+    float: right;
+}

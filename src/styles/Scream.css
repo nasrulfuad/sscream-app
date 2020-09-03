@@ -1,0 +1,20 @@
+.scream {
+    margin-top: 10px;
+}
+
+.scream__actions {
+    width: 100%;
+    display: "block";
+    /* font-size: 16px; */
+}
+
+.scream__username {
+    display: inline-block;
+}
+
+.scream__username span {
+    font-size: 11px;
+    font-weight: normal;
+    color: #777;
+    display: block;
+}
