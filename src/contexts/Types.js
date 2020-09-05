@@ -1,0 +1,6 @@
+export class Types {
+    static SET_AUTHENTICATED = "SET_AUTHENTICATED";
+    static SET_UNAUTHENTICATED = "SET_UNAUTHENTICATED";
+    static SET_USER = "SET_USER";
+    static SET_IMAGE_PROFILE = "SET_IMAGE_PROFILE";
+}

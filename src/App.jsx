@@ -1,23 +1,21 @@
 import React from "react";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
-import UserContextProvider from "./contexts/user/context";
-import GlobalContextProvider from "./contexts/global/context";
-import { SignUp, Home, SignIn } from "./pages";
+import { ContextProvider } from "./contexts/context";
+import { SignIn, SignUp, Home } from "./pages";
+import { AuthRoute } from "./utils/AuthRoute";
 
-function App() {
-    return (
-        <UserContextProvider>
-            <GlobalContextProvider>
+export class App extends React.Component {
+    render() {
+        return (
+            <ContextProvider>
                 <Router>
                     <Switch>
-                        <Route path="/signup" component={SignUp} />
-                        <Route path="/login" component={SignIn} />
-                        <Route path="/" component={Home} />
+                        <Route exact path="/" component={Home} />
+                        <AuthRoute exact path="/signup" component={SignUp} />
+                        <AuthRoute exact path="/login" component={SignIn} />
                     </Switch>
                 </Router>
-            </GlobalContextProvider>
-        </UserContextProvider>
-    );
+            </ContextProvider>
+        );
+    }
 }
-
-export default App;

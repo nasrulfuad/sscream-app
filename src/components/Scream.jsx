@@ -1,63 +1,77 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, Avatar } from "antd";
 import { CommentOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import moment from "moment";
 import "../styles/Scream.css";
 
-function Scream({ scream }) {
-    const [isLike, setIsLike] = useState(false);
-    const [likes, setLikes] = useState(scream.likeCount);
+export class Scream extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLike: false,
+            likes: this.props.scream.likeCount,
+        }
+    }
 
-    const onLike = () => {
-        setIsLike(true);
-        setLikes(1);
-    };
+    onLike = () => {
+        this.setState({
+            isLike: true,
+            likes: 1
+        });
+    }
 
-    const onDisLike = () => {
-        setIsLike(false);
-        setLikes(0);
-    };
+    onDisLike = () => {
+        this.setState({
+            isLike: false,
+            likes: 0
+        });
+    }
 
-    const likeBtn = isLike ? (
-        <LikeFilled
-            key="disLike"
-            onClick={onDisLike}
-            style={{ color: "#1890ff" }}
-        />
-    ) : (
-        <LikeOutlined key="like" onClick={onLike} />
-    );
-
-    return (
-        <div className="scream">
-            <Card
-                actions={[
-                    <span
-                        onClick={() => (isLike ? onDisLike() : onLike())}
-                        className="scream__actions"
-                    >
-                        {likeBtn} {likes}
-                    </span>,
-                    <span className="scream__actions">
-                        <CommentOutlined key="comments" /> {scream.commentCount}
-                    </span>,
-                ]}
-            >
-                <Card.Meta
-                    avatar={<Avatar src={scream.userImage} />}
-                    title={
-                        <p className="scream__username">
-                            {scream.userHandle}
-                            <span className="scream__createdAt">
-                                {moment(scream.createdAt).fromNow()}
-                            </span>
-                        </p>
-                    }
+    btn = () => {
+        if (this.state.isLike)
+            return (
+                <LikeFilled
+                    key="disLike"
+                    style={{ color: "#1890ff" }}
                 />
-                {scream.body}
-            </Card>
-        </div>
-    );
-}
+            );
+        return (<LikeOutlined key="like" />);
+    }
 
-export default Scream;
+    buttons = () => {
+        const { isLike, likes } = this.state;
+        return [
+            <span
+                onClick={() => (isLike ? this.onDisLike() : this.onLike())}
+                className="scream__actions"
+            >
+                {this.btn()} {likes}
+            </span>,
+            <span className="scream__actions">
+                <CommentOutlined key="comments" /> {this.props.scream.commentCount}
+            </span>,
+        ]
+    }
+
+    render() {
+        const { scream } = this.props;
+        return (
+            <div className="scream">
+                <Card actions={this.buttons()}>
+                    <Card.Meta
+                        avatar={<Avatar src={scream.userImage} />}
+                        title={
+                            <p className="scream__username">
+                                {scream.userHandle}
+                                <span className="scream__createdAt">
+                                    {moment(scream.createdAt).fromNow()}
+                                </span>
+                            </p>
+                        }
+                    />
+                    {scream.body}
+                </Card>
+            </div>
+        );
+    }
+}

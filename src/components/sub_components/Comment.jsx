@@ -2,10 +2,10 @@ import React from "react";
 import { Comment as CommentElement, Avatar, Tooltip } from "antd";
 import moment from "moment";
 
-function Comment({ item }) {
-    return (
+export class Comment extends React.Component {
+    render() {
         <CommentElement
-            author={item.name.first}
+            author={this.props.item.name.first}
             avatar={
                 <Avatar
                     src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
@@ -19,7 +19,5 @@ function Comment({ item }) {
                 </Tooltip>
             }
         />
-    );
-}
-
-export default Comment;
+    }
+};

@@ -1,0 +1,23 @@
+.profileCard {
+    text-align: center;
+    margin-bottom: 50px !important;
+}
+
+.profileCard__image {
+    width: 200px;
+    height: 200px;
+    border-radius: 100%;
+    display: block;
+    object-fit: cover;
+    margin: 0 auto;
+}
+
+.profileCard__upload {
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.profileCard .anticon {
+    font-size: 16px;
+    margin-right: 6px;
+}

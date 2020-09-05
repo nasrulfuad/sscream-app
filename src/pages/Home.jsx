@@ -1,84 +1,116 @@
-import React, { useState, useEffect } from "react";
-import { List, Row, Col } from "antd";
+import React from "react";
+import { List, Row, Col, Card, Skeleton } from "antd";
 import InfiniteScroll from "react-infinite-scroller";
-import Scream from "../components/Scream";
-import FormPost from "../components/FormPost";
-import SkeletonScream from "../components/SkeletonScream";
-import Header from "../components/Header";
-import { getScreams } from "../Api/screams";
-// import { user as UserContext } from "../contexts";
+import { ProfileCard, Scream, FormScream, Header } from "../components";
+import { ScreamApi } from "../Api/ScreamApi";
+import { Context } from "../contexts";
+import "../styles/Home.css";
 
-function Home() {
-    // const { user } = useContext(UserContext.context);
-    const [screams, setScreams] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [hasMoreScreams, setHasMoreScreams] = useState(true);
+export class Home extends React.Component {
+    static contextType = Context;
 
-    const handleInfiniteOnLoad = () => {
-        setIsLoading(true);
-        if (screams.length > 0) {
-            getScreams(screams[screams.length - 1].createdAt, dataScreams => {
-                if (dataScreams.length === 0) {
-                    setIsLoading(false);
-                    return setHasMoreScreams(false);
-                } else {
-                    setIsLoading(false);
-                    return setScreams([...screams, ...dataScreams]);
-                }
-            });
+    constructor(props) {
+        super(props);
+        this.state = {
+            screams: [],
+            isLoading: true,
+            hasMoreScreams: false,
         }
-    };
+    }
 
-    useEffect(() => {
-        getScreams("", dataScreams => {
-            setIsLoading(false);
-            setScreams(dataScreams);
-        });
-    }, []);
+    async componentDidMount() {
+        const { data } = await ScreamApi.getScreams();
 
-    return (
-        <div>
-            <Header />
-            <Row
-                justify="center"
-                style={{
-                    paddingTop: 100,
-                    backgroundColor: "#fafafa",
-                    minHeight: "100vh",
-                }}
-            >
-                <Col
-                    lg={{ span: 8 }}
-                    md={{ span: 18 }}
-                    sm={{ span: 24 }}
-                    style={{ border: "none" }}
-                >
-                    <FormPost />
-                    <InfiniteScroll
-                        initialLoad={false}
-                        pageStart={0}
-                        loadMore={handleInfiniteOnLoad}
-                        hasMore={hasMoreScreams}
-                        useWindow={true}
-                    >
-                        <List
-                            dataSource={screams}
-                            renderItem={scream => (
-                                <Scream key={scream.id} scream={scream} />
-                            )}
+        if (data.length > 0) {
+            this.setState(prev => ({
+                ...prev,
+                screams: data,
+                hasMoreScreams: true,
+                isLoading: false,
+            }));
+        }
+    }
+
+    handleInfiniteOnLoad = async () => {
+        const { screams, hasMoreScreams } = this.state;
+
+        if (screams.length > 0 && hasMoreScreams) {
+            this.setState(prev => ({ ...prev, isLoading: true }))
+            const { data } = await ScreamApi.getScreams(screams[screams.length - 1].createdAt)
+
+            if (data.length === 0)
+                return this.setState(prev => ({
+                    ...prev,
+                    isLoading: false,
+                    hasMoreScreams: false
+                }));
+
+            return this.setState(prev => ({
+                ...prev,
+                isLoading: false,
+                screams: [...screams, ...data],
+            }));
+        }
+    }
+
+    render() {
+        const { isLoading, screams, hasMoreScreams } = this.state;
+
+        return (
+            <div>
+                <Header />
+                <Row justify="center" className="home__row">
+                    <Col {...responsive.profile} className="home__colProfile">
+                        <ProfileCard />
+                    </Col>
+                    <Col {...responsive.scream}>
+                        <FormScream />
+                        <InfiniteScroll
+                            initialLoad={false}
+                            pageStart={0}
+                            loadMore={this.handleInfiniteOnLoad}
+                            hasMore={hasMoreScreams}
+                            useWindow={true}
                         >
-                            {isLoading && (
-                                <div>
-                                    <SkeletonScream />
-                                    <SkeletonScream />
-                                </div>
-                            )}
-                        </List>
-                    </InfiniteScroll>
-                </Col>
-            </Row>
-        </div>
-    );
+                            <List
+                                dataSource={screams}
+                                renderItem={scream => (
+                                    <Scream key={scream.id} scream={scream} />
+                                )}
+                            >
+                                {isLoading && (
+                                    <div>
+                                        {[1,2].map(i => (
+                                            <Card key={i} style={{ marginTop: 10 }}>
+                                                <Skeleton active avatar></Skeleton>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                )}
+                            </List>
+                        </InfiniteScroll>
+                    </Col>
+                </Row>
+            </div>
+        );
+    }
 }
 
-export default Home;
+const responsive = {
+    scream: {
+        xxl:{ span: 10, offset: 1 },
+        xl:{ span: 12, offset: 1 },
+        lg:{ span: 15 },
+        md:{ span: 20 },
+        sm:{ span: 20 },
+        xs:{ span: 20 },
+    },
+    profile: {
+        xxl:{ span: 6 },
+        xl:{ span: 7 },
+        lg:{ span: 10 },
+        md:{ span: 13 },
+        sm:{ span: 20 },
+        xs:{ span: 20 },
+    }
+}

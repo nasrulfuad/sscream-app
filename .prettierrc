@@ -2,5 +2,6 @@
     "singleQuote": false,
     "arrowParens": "avoid",
     "tabWidth": 4,
-    "jsx-a11y/anchor-is-valid": false
+    "jsx-a11y/anchor-is-valid": false,
+    "printWidth": 100
 }
