@@ -18,6 +18,7 @@ export class Home extends React.Component {
     }
 
     async componentDidMount() {
+        this.context.dispatch({ type: Types.UNSET_SCREAMS });
         const { data } = await ScreamApi.getScreams();
 
         if (data.length > 0) {
@@ -31,17 +32,6 @@ export class Home extends React.Component {
                 payload: data
             });
         }
-    }
-
-    onDeleteScream = screamId => {
-        // this.setState(prev => ({
-        //     ...prev,
-        //     screams: prev.screams.filter(scream => scream.screamId !== screamId)
-        // }));
-        this.context.dispatch({
-            type: Types.DELETE_SCREAM,
-            payload: screamId,
-        });
     }
 
     handleInfiniteOnLoad = async () => {
@@ -92,7 +82,7 @@ export class Home extends React.Component {
                             <List
                                 dataSource={screams}
                                 renderItem={scream => (
-                                    <Scream key={scream.id} scream={scream} onDeleteScream={this.onDeleteScream} />
+                                    <Scream key={scream.id} scream={scream} />
                                 )}
                             >
                                 {isLoading && (

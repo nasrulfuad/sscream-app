@@ -68,6 +68,21 @@ export function Reducer(state, action) {
                 ]
             }
 
+        case Types.UNSET_SCREAMS:
+            return {
+                ...state,
+                screams: []
+            }
+
+        case Types.ADD_SCREAM:
+            return {
+                ...state,
+                screams: [
+                    action.payload,
+                    ...state.screams
+                ]
+            }
+
         case Types.DELETE_SCREAM:
             return {
                 ...state,

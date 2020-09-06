@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 import { Card, Avatar, message, Button, Popconfirm } from "antd";
 import { CommentOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import moment from "moment";
-import { Context } from "../contexts";
+import { Context, Types } from "../contexts";
 import { ScreamApi } from "../Api/ScreamApi";
 import "../styles/Scream.css";
 
-const ScreamFunc = ({ scream, onDeleteScream }) => {
-    const { store } = useContext(Context);
+const ScreamFunc = ({ scream }) => {
+    const { store, dispatch } = useContext(Context);
     const [isLiked, setIsLiked] = useState(false);
     const [likes, setLikes] = useState(scream.likeCount);
 
@@ -42,14 +42,16 @@ const ScreamFunc = ({ scream, onDeleteScream }) => {
     }
 
     const onDelete = async () => {
-        onDeleteScream(scream.screamId);
         if (!isAuthenticated()) return;
+        message.loading({ content: "Loading..", key: "delete" });
         const response = await ScreamApi.deleteScream(scream.screamId);
 
-        if (response.status === "Ok") {
-            message.success("Scream deleted successfully!", 3);
-        }
-        console.log(response);
+        if (response.status !== "Ok") return message.error({ content: "Something went wrong!", key: "delete", duration: 3 });
+        dispatch({
+            type: Types.DELETE_SCREAM,
+            payload: scream.screamId,
+        });
+        return message.success({ content: "Scream deleted successfully!", key: "delete", duration: 3 });
     }
 
     const isAuthenticated = () => {

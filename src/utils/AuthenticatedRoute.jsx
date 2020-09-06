@@ -13,7 +13,7 @@ export class AuthenticatedRoute extends React.Component {
             <Route
                 {...rest}
                 render={props => authenticated === false
-                    ? <Redirect to="/profile" />
+                    ? <Redirect to="/" />
                     : <Component {...props} />
                 }
             />

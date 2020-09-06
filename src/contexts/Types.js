@@ -6,5 +6,7 @@ export class Types {
     static SET_IMAGE_PROFILE = "SET_IMAGE_PROFILE";
     /*Screams*/
     static SET_SCREAMS = "SET_SCREAMS";
+    static UNSET_SCREAMS = "UNSET_SCREAMS";
+    static ADD_SCREAM = "ADD_SCREAM";
     static DELETE_SCREAM = "DELETE_SCREAM";
 }

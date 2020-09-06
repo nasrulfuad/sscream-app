@@ -1,31 +1,39 @@
 import React from "react";
-import { Form, Button, Input, Card } from "antd";
+import { Form, Button, Input, Card, message } from "antd";
 import "../styles/FormPost.css";
-import { Context } from "../contexts";
+import { ScreamApi } from "../Api/ScreamApi";
+import { Context, Types } from "../contexts";
 
 export class FormScream extends React.Component {
     static contextType = Context;
 
-    state = {
-        scream: '',
-        isLoading: false,
-    };
+    state = { isLoading: false, };
 
-    onAdd = () => {
-        this.setState(prev => ({ ...prev, isLoading: true }));
+    formRef = React.createRef();
+
+    onFinish = async body => {
+        this.setState({ isLoading: true });
+        const response = await ScreamApi.addScream(body);
+
+        if (response.status !== "Ok") return message.error("Something went wrong!", 3);
+
+        this.context.dispatch({
+            type: Types.ADD_SCREAM,
+            payload: response.data,
+        });
+        this.formRef.current.resetFields();
+        message.success("Scream posted successfully!", 3);
     }
 
     render() {
         const { authenticated } = this.context.store;
         return(
             <Card>
-                <Form>
-                    <Form.Item>
+                <Form ref={this.formRef} onFinish={this.onFinish}>
+                    <Form.Item name="body" rules={[rules]}>
                         <Input.TextArea
                             rows={4}
                             placeholder={ authenticated ? `What's on your mind, ${this.context.store.credentials.handle}?` : "What's on your mind, guest?" }
-                            value={this.state.scream}
-                            onChange={e => this.setState({ scream: e.target.value })}
                             disabled={authenticated ? false : true}
                         />
                     </Form.Item>
@@ -35,12 +43,17 @@ export class FormScream extends React.Component {
                         style={{ marginTop: 10 }}
                         disabled={authenticated ? false : true}
                         loading={this.state.isLoading}
-                        onClick={this.onAdd}
+                        htmlType="submit"
                     >
-                        { authenticated ? 'Post' : 'Login to post your scream' }
+                        { authenticated ? 'Post a new scream' : 'Login to post your scream' }
                     </Button>
                 </Form>
             </Card>
         );
     }
+}
+
+const rules = {
+    required: true,
+    message: "Please input your scream",
 }
