@@ -13,7 +13,8 @@ export const INITIAL_STORE = {
         createdAt: "2020-08-31T11:21:28.281Z"
     },
     likes: [],
-    notifications: []
+    notifications: [],
+    screams: []
 };
 
 export function Reducer(state, action) {
@@ -54,6 +55,23 @@ export function Reducer(state, action) {
                     ...state.credentials,
                     imageUrl: action.imageUrl,
                 }
+            }
+
+        /* Screams */
+
+        case Types.SET_SCREAMS:
+            return {
+                ...state,
+                screams:[
+                    ...state.screams,
+                    ...action.payload
+                ]
+            }
+
+        case Types.DELETE_SCREAM:
+            return {
+                ...state,
+                screams: state.screams.filter(scream => scream.screamId !== action.payload)
             }
 
         default:

@@ -10,6 +10,15 @@ export class ScreamApi {
         }
     }
 
+    static async addScream(data) {
+        try {
+            return (await axios.post("screams", data)).data;
+        } catch({ response }) {
+            console.log(response.data);
+            return response.data;
+        }
+    }
+
     static async likeScream(screamId) {
         try {
             return (await axios.post(`screams/${screamId}/like`)).data;

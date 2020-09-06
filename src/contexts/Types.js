@@ -6,4 +6,5 @@ export class Types {
     static SET_IMAGE_PROFILE = "SET_IMAGE_PROFILE";
     /*Screams*/
     static SET_SCREAMS = "SET_SCREAMS";
+    static DELETE_SCREAM = "DELETE_SCREAM";
 }

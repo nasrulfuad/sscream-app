@@ -3,7 +3,7 @@ import { List, Row, Col, Card, Skeleton } from "antd";
 import InfiniteScroll from "react-infinite-scroller";
 import { ProfileCard, Scream, FormScream, Header } from "../components";
 import { ScreamApi } from "../Api/ScreamApi";
-import { Context } from "../contexts";
+import { Context, Types } from "../contexts";
 import "../styles/Home.css";
 
 export class Home extends React.Component {
@@ -12,7 +12,6 @@ export class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            screams: [],
             isLoading: true,
             hasMoreScreams: false,
         }
@@ -24,24 +23,31 @@ export class Home extends React.Component {
         if (data.length > 0) {
             this.setState(prev => ({
                 ...prev,
-                screams: data,
                 hasMoreScreams: true,
                 isLoading: false,
             }));
+            this.context.dispatch({
+                type: Types.SET_SCREAMS,
+                payload: data
+            });
         }
     }
 
     onDeleteScream = screamId => {
-        this.setState(prev => ({
-            ...prev,
-            screams: prev.screams.filter(scream => scream.screamId !== screamId)
-        }));
+        // this.setState(prev => ({
+        //     ...prev,
+        //     screams: prev.screams.filter(scream => scream.screamId !== screamId)
+        // }));
+        this.context.dispatch({
+            type: Types.DELETE_SCREAM,
+            payload: screamId,
+        });
     }
 
     handleInfiniteOnLoad = async () => {
-        const { screams, hasMoreScreams } = this.state;
+        const { screams } = this.context.store;
 
-        if (screams.length > 0 && hasMoreScreams) {
+        if (screams.length > 0 && this.state.hasMoreScreams) {
             this.setState(prev => ({ ...prev, isLoading: true }))
             const { data } = await ScreamApi.getScreams(screams[screams.length - 1].createdAt)
 
@@ -52,16 +58,20 @@ export class Home extends React.Component {
                     hasMoreScreams: false
                 }));
 
-            return this.setState(prev => ({
+            this.setState(prev => ({
                 ...prev,
                 isLoading: false,
-                screams: [...screams, ...data],
             }));
+            this.context.dispatch({
+                type: Types.SET_SCREAMS,
+                payload: data
+            });
         }
     }
 
     render() {
-        const { isLoading, screams, hasMoreScreams } = this.state;
+        const { isLoading, hasMoreScreams } = this.state;
+        const { screams } = this.context.store;
 
         return (
             <React.Fragment>
