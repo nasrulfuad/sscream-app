@@ -6,16 +6,13 @@ import { UserApi } from "../Api/UserApi";
 import { Context, Types } from "../contexts";
 import "../styles/ProfileCard.css";
 
-export class ProfileCard extends React.Component {
+export class ProfileCard extends React.PureComponent {
     static contextType = Context;
 
     constructor(props) {
         super(props);
         this.state = {
         }
-    }
-
-    componentDidMount() {
     }
 
     handleImageChange = async e => {

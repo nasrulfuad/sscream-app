@@ -31,6 +31,13 @@ export class Home extends React.Component {
         }
     }
 
+    onDeleteScream = screamId => {
+        this.setState(prev => ({
+            ...prev,
+            screams: prev.screams.filter(scream => scream.screamId !== screamId)
+        }));
+    }
+
     handleInfiniteOnLoad = async () => {
         const { screams, hasMoreScreams } = this.state;
 
@@ -57,9 +64,9 @@ export class Home extends React.Component {
         const { isLoading, screams, hasMoreScreams } = this.state;
 
         return (
-            <div>
+            <React.Fragment>
                 <Header />
-                <Row justify="center" className="home__row">
+                <Row justify="center" className="paddingFromHeader">
                     <Col {...responsive.profile} className="home__colProfile">
                         <ProfileCard />
                     </Col>
@@ -75,7 +82,7 @@ export class Home extends React.Component {
                             <List
                                 dataSource={screams}
                                 renderItem={scream => (
-                                    <Scream key={scream.id} scream={scream} />
+                                    <Scream key={scream.id} scream={scream} onDeleteScream={this.onDeleteScream} />
                                 )}
                             >
                                 {isLoading && (
@@ -91,7 +98,7 @@ export class Home extends React.Component {
                         </InfiniteScroll>
                     </Col>
                 </Row>
-            </div>
+            </React.Fragment>
         );
     }
 }

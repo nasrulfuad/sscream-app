@@ -37,6 +37,16 @@ export function Reducer(state, action) {
                 ...action.payload,
                 authenticated: true
             }
+
+        case Types.SET_PROFILE:
+            return {
+                ...state,
+                credentials: {
+                    ...state.credentials,
+                    ...action.data
+                }
+            }
+
         case Types.SET_IMAGE_PROFILE:
             return {
                 ...state,

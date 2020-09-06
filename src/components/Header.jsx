@@ -1,6 +1,7 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import { PageHeader, Button, Menu, Dropdown, message } from "antd";
-import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
+import { UserOutlined, LogoutOutlined, BellOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { Context, Types } from "../contexts";
 import "../styles/Header.css";
@@ -15,14 +16,38 @@ export class Header extends React.Component {
         message.warning("You are now logged out", 5);
     }
 
+    menu = () => (
+        <Menu selectedKeys={window.location.pathname === "/profile" ? "profile" : ""}>
+            <Menu.Item key="profile" className="header__itemDropdown">
+                <Link to="/profile">
+                    Profile
+                    <UserOutlined />
+                </Link>
+            </Menu.Item>
+            <Menu.Item key="logout" className="header__itemDropdown" onClick={this.onLogout}>
+                <a>
+                    Logout
+                    <LogoutOutlined />
+                </a>
+            </Menu.Item>
+        </Menu>
+    )
+
+
     extra() {
         if (this.context.store.authenticated) {
             return (
-                <Dropdown key="dropdown-user" overlay={menu(this.onLogout)} trigger={["click"]}>
-                    <Button shape="square" size="large" type="primary">
-                        <UserOutlined />
-                    </Button>
-                </Dropdown>
+                <React.Fragment key="button-top-header">
+                    <Button className="header__btnNotification" icon={<BellOutlined />} size="large" shape="circle"></Button>
+                    <Dropdown.Button
+                        key="dropdown-user"
+                        overlay={this.menu()}
+                        trigger={["click"]}
+                        icon={<UserOutlined />}
+                    >
+                        <Link to="/">Home</Link>
+                    </Dropdown.Button>
+                </React.Fragment>
             )
         }
 
@@ -41,31 +66,11 @@ export class Header extends React.Component {
     render() {
         return (
             <PageHeader
+                className="header"
                 ghost={false}
                 title={<Link to="/">SScream App</Link>}
-                style={{
-                    position: "fixed",
-                    top: 0,
-                    width: "100%",
-                    zIndex: 1,
-                    borderBottom: "1px solid #ececec",
-                    boxShadow: "0 2px 8px #f0f1f2",
-                }}
                 extra={[this.extra()]}
             />
         );
     }
 }
-
-const menu = onLogout => (
-    <Menu>
-        <Menu.Item key="profile" className="header__itemDropdown">
-            Profile
-            <UserOutlined />
-        </Menu.Item>
-        <Menu.Item key="logout" className="header__itemDropdown" onClick={onLogout}>
-            Logout
-            <LogoutOutlined style={{ marginLeft: 20 }} />
-        </Menu.Item>
-    </Menu>
-)

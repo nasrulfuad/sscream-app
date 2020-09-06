@@ -30,8 +30,16 @@ export class UserApi {
 
             return (await axios.get("users/profile")).data;
         } catch ({ response }) {
-            console.log(response.data);
+            console.log(response.data)
             return false;
+        }
+    }
+
+    static async updateProfile(data) {
+        try {
+            return (await axios.post("users/profile", data)).data;
+        } catch({ response }) {
+            return response.data;
         }
     }
 

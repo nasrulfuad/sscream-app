@@ -1,7 +1,24 @@
-.header__itemDropdown {
-    display: flex;
+.header {
+    position: fixed !important;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+    border-bottom: 1px solid #ececec;
+    box-shadow: 0 2px 8px #f0f1f2;
+}
+
+.header__btnNotification {
+    margin-right: 10px;
+}
+
+.header__itemDropdown a {
+    display: flex !important;
     justify-content: space-between;
-    align-items: center;
+    width: 100px;
+}
+
+.header__itemDropdown .anticon {
+    margin-top: 4px;
 }
 
 .header__loginSignup button {

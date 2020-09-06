@@ -1,4 +1,5 @@
 import React, { createContext, useReducer, useEffect } from "react";
+import { message } from "antd";
 import jwtDecode from "jwt-decode";
 import { UserApi } from "../Api/UserApi";
 import { Reducer, INITIAL_STORE } from "./Reducer";
@@ -12,8 +13,10 @@ const ContextProvider = ({ children }) => {
     const checkIsAuthenticated = () => {
         const token = localStorage.token;
         if (token) {
-            if (jwtDecode(token).exp * 1000 < Date.now())
+            if (jwtDecode(token).exp * 1000 < Date.now()) {
+                message.warning("Your session has expired, please login again!", 3);
                 return localStorage.removeItem('token');
+            }
             fetchProfile(token);
         }
     }

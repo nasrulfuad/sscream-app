@@ -2,6 +2,11 @@
     margin-top: 10px;
 }
 
+.scream .ant-card-meta-title {
+    display: flex;
+    justify-content: space-between;
+}
+
 .scream__actions {
     width: 100%;
     display: block;
