@@ -9,4 +9,10 @@ export class Types {
     static UNSET_SCREAMS = "UNSET_SCREAMS";
     static ADD_SCREAM = "ADD_SCREAM";
     static DELETE_SCREAM = "DELETE_SCREAM";
+    /* Modal Scream*/
+    static SHOW_MODAL_SCREAM = "SHOW_MODAL_SCREAM";
+    static HIDE_MODAL_SCREAM = "HIDE_MODAL_SCREAM";
+    static SET_SCREAM_MODAL = "SET_SCREAM_MODAL";
+    static SET_LOADING_MODAL_SCREAM = "SET_LOADING_MODAL_SCREAM";
+    static SET_COMMENT = "SET_COMMENT";
 }

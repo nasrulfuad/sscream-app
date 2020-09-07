@@ -1,0 +1,11 @@
+.comment__element .ant-comment-content-author {
+    display: flex;
+    flex-direction: column;
+}
+.comment__element .ant-comment-content-author-name {
+    color: #444;
+}
+
+.comment__element .ant-comment-content-author-time {
+    color: #777;
+}

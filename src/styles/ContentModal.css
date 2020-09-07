@@ -1,0 +1,12 @@
+.post__commentCard .ant-card-body {
+    padding-bottom: 0;
+}
+
+.post__commentList {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.form__comment {
+  margin-top: 10px;
+}

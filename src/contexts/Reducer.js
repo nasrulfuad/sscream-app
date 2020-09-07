@@ -14,7 +14,10 @@ export const INITIAL_STORE = {
     },
     likes: [],
     notifications: [],
-    screams: []
+    screams: [],
+    openModalScream: false,
+    loadingModal: false,
+    screamInModal: {},
 };
 
 export function Reducer(state, action) {
@@ -30,7 +33,10 @@ export function Reducer(state, action) {
         case Types.SET_UNAUTHENTICATED:
             localStorage.removeItem('token');
             delete axios.defaults.headers.common['Authorization'];
-            return INITIAL_STORE;
+            return {
+                ...INITIAL_STORE,
+                screams: state.screams,
+            };
 
         case Types.SET_USER:
             return {
@@ -87,6 +93,41 @@ export function Reducer(state, action) {
             return {
                 ...state,
                 screams: state.screams.filter(scream => scream.screamId !== action.payload)
+            }
+
+        case Types.SHOW_MODAL_SCREAM:
+            return {
+                ...state,
+                openModalScream: true,
+                loadingModal: true,
+            }
+
+        case Types.HIDE_MODAL_SCREAM:
+            return {
+                ...state,
+                openModalScream: false,
+            }
+
+        case Types.SET_LOADING_MODAL_SCREAM:
+            return {
+                ...state,
+                loadingModal: !state.loadingModal,
+            }
+
+        case Types.SET_SCREAM_MODAL:
+            return {
+                ...state,
+                loadingModal: false,
+                screamInModal: action.payload,
+            }
+
+        case Types.SET_COMMENT:
+            return {
+                ...state,
+                screamInModal: {
+                    ...state.screamInModal,
+                    comments: [action.payload, ...state.screamInModal.comments]
+                }
             }
 
         default:

@@ -1,7 +1,8 @@
 import React from "react";
-import { List, Row, Col, Card, Skeleton } from "antd";
+import { List, Row, Col, Card, Skeleton, Modal, message, Button } from "antd";
 import InfiniteScroll from "react-infinite-scroller";
-import { ProfileCard, Scream, FormScream, Header } from "../components";
+import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
+import { ProfileCard, Scream, FormScream, Header, ContentModal } from "../components";
 import { ScreamApi } from "../Api/ScreamApi";
 import { Context, Types } from "../contexts";
 import "../styles/Home.css";
@@ -18,7 +19,7 @@ export class Home extends React.Component {
     }
 
     async componentDidMount() {
-        this.context.dispatch({ type: Types.UNSET_SCREAMS });
+        await this.context.dispatch({ type: Types.UNSET_SCREAMS });
         const { data } = await ScreamApi.getScreams();
 
         if (data.length > 0) {
@@ -34,15 +35,34 @@ export class Home extends React.Component {
         }
     }
 
+    onShowModalScream = async screamId => {
+        if (!this.context.store.authenticated) return message.warning("You are not logged in!");
+        disableBodyScroll(document.querySelector("body"));
+        this.context.dispatch({
+            type: Types.SHOW_MODAL_SCREAM
+        });
+        const response = await ScreamApi.getScream(screamId);
+        if (response.status !== "Ok") return message.error("Something went wrong!", 3);
+
+        this.context.dispatch({ type: Types.SET_SCREAM_MODAL, payload: response.data });
+    }
+
+    onHideModalScream = () => {
+        enableBodyScroll(document.querySelector("body"));
+        this.context.dispatch({
+            type: Types.HIDE_MODAL_SCREAM
+        });
+    }
+
     handleInfiniteOnLoad = async () => {
-        const { screams } = this.context.store;
+        const { screams } = await this.context.store;
 
         if (screams.length > 0 && this.state.hasMoreScreams) {
             this.setState(prev => ({ ...prev, isLoading: true }))
             const { data } = await ScreamApi.getScreams(screams[screams.length - 1].createdAt)
 
             if (data.length === 0)
-                return this.setState(prev => ({
+                return await this.setState(prev => ({
                     ...prev,
                     isLoading: false,
                     hasMoreScreams: false
@@ -52,7 +72,8 @@ export class Home extends React.Component {
                 ...prev,
                 isLoading: false,
             }));
-            this.context.dispatch({
+
+            await this.context.dispatch({
                 type: Types.SET_SCREAMS,
                 payload: data
             });
@@ -61,7 +82,7 @@ export class Home extends React.Component {
 
     render() {
         const { isLoading, hasMoreScreams } = this.state;
-        const { screams } = this.context.store;
+        const { screams, openModalScream } = this.context.store;
 
         return (
             <React.Fragment>
@@ -82,7 +103,7 @@ export class Home extends React.Component {
                             <List
                                 dataSource={screams}
                                 renderItem={scream => (
-                                    <Scream key={scream.id} scream={scream} />
+                                    <Scream key={scream.id} scream={scream} onShowModalScream={this.onShowModalScream} />
                                 )}
                             >
                                 {isLoading && (
@@ -98,6 +119,20 @@ export class Home extends React.Component {
                         </InfiniteScroll>
                     </Col>
                 </Row>
+                <Modal
+                  visible={openModalScream}
+                  onCancel={this.onHideModalScream}
+                  closable={false}
+                  maskClosable={false}
+                  okText="Oke"
+                  footer={[
+                    <Button key="back" onClick={this.onHideModalScream}>
+                      Close
+                    </Button>
+                  ]}
+                >
+                {this.context.store.loadingModal ? (<Skeleton loading avatar />) : (<ContentModal />)}
+                </Modal>
             </React.Fragment>
         );
     }

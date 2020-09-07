@@ -1,21 +1,20 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Card, Avatar, message, Button, Popconfirm } from "antd";
+import { Card, Avatar, message, Button, Popconfirm, Tooltip } from "antd";
 import { CommentOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import moment from "moment";
 import { Context, Types } from "../contexts";
 import { ScreamApi } from "../Api/ScreamApi";
 import "../styles/Scream.css";
 
-const ScreamFunc = ({ scream }) => {
+const ScreamFunc = ({ scream, onShowModalScream, isModal }) => {
     const { store, dispatch } = useContext(Context);
     const [isLiked, setIsLiked] = useState(false);
     const [likes, setLikes] = useState(scream.likeCount);
 
     useEffect(() => {
-        const { likes } = store;
-        const liked = likes.find(like => like.screamId === scream.screamId);
+        const liked = store.likes.find(like => like.screamId === scream.screamId);
 
-        if (likes && liked) {
+        if (store.likes && liked) {
             setIsLiked(true);
         }
     }, [store, scream]);
@@ -28,7 +27,6 @@ const ScreamFunc = ({ scream }) => {
             setIsLiked(true);
             setLikes(response.data.likeCount);
         }
-        console.log(response);
     }
 
     const onDisLike = async () => {
@@ -38,7 +36,6 @@ const ScreamFunc = ({ scream }) => {
             setIsLiked(false);
             setLikes(response.data.likeCount);
         }
-        console.log(response);
     }
 
     const onDelete = async () => {
@@ -74,12 +71,12 @@ const ScreamFunc = ({ scream }) => {
     const buttons = () => {
         return [
             <span
-                onClick={() => (isLiked ? onDisLike() : onLike())}
+                onClick={() => (!isModal ? isLiked ? onDisLike() : onLike() : null)}
                 className="scream__actions"
             >
                 {btn()} {likes}
             </span>,
-            <span className="scream__actions">
+            <span className="scream__actions" onClick={() => !isModal ? onShowModalScream(scream.screamId) : null}>
                 <CommentOutlined key="comments" /> {scream.commentCount}
             </span>,
         ]
@@ -94,9 +91,9 @@ const ScreamFunc = ({ scream }) => {
                         <React.Fragment>
                             <div className="scream__username">
                                 {scream.userHandle}
-                                <span className="scream__createdAt">
-                                    {moment(scream.createdAt).fromNow()}
-                                </span>
+                                    <Tooltip title={moment(scream.createdAt).fromNow()}>
+                                        <span className="scream__createdAt">{moment(scream.createdAt).fromNow()}</span>
+                                    </Tooltip>
                             </div>
                             {scream.userHandle === store.credentials.handle && (
                                 <Popconfirm
@@ -120,97 +117,3 @@ const ScreamFunc = ({ scream }) => {
 }
 
 export const Scream = React.memo(ScreamFunc);
-
-
-// export class Scream1 extends React.Component {
-//     static contextType = Context;
-
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             isLiked: false,
-//             likes: this.props.scream.likeCount,
-//         }
-//     }
-
-//     componentDidMount() {
-//         const { screamId } = this.props.scream;
-//         const { likes } = this.context.store;
-//         const liked = likes.find(like => like.screamId === screamId);
-
-//         if (likes && liked) {
-//             this.setState(prev => ({ ...prev, isLiked: true }))
-//         }
-//     }
-
-//     onLike = async () => {
-//         const response = await ScreamApi.likeScream(this.props.scream.screamId);
-//         if (response.status === "Ok") {
-//             this.setState({
-//                 isLiked: true,
-//                 likes: response.data.likeCount
-//             });
-//         }
-//         console.log(response);
-//     }
-
-//     onDisLike = async () => {
-//         const response = await ScreamApi.unLikeScream(this.props.scream.screamId);
-//         if (response.status === "Ok") {
-//             this.setState({
-//                 isLiked: false,
-//                 likes: response.data.likeCount
-//             });
-//         }
-//         console.log(response);
-//     }
-
-//     btn = () => {
-//         if (this.state.isLiked)
-//             return (
-//                 <LikeFilled
-//                     key="disLike"
-//                     style={{ color: "#1890ff" }}
-//                 />
-//             );
-//         return (<LikeOutlined key="like" />);
-//     }
-
-//     buttons = () => {
-//         const { isLiked, likes } = this.state;
-//         return [
-//             <span
-//                 onClick={() => (isLiked ? this.onDisLike() : this.onLike())}
-//                 className="scream__actions"
-//             >
-//                 {this.btn()} {likes}
-//             </span>,
-//             <span className="scream__actions">
-//                 <CommentOutlined key="comments" /> {this.props.scream.commentCount}
-//             </span>,
-//         ]
-//     }
-
-//     render() {
-//         const { scream } = this.props;
-
-//         return (
-//             <div className="scream">
-//                 <Card actions={this.buttons()}>
-//                     <Card.Meta
-//                         avatar={<Avatar src={scream.userImage} />}
-//                         title={
-//                             <p className="scream__username">
-//                                 {scream.userHandle}
-//                                 <span className="scream__createdAt">
-//                                     {moment(scream.createdAt).fromNow()}
-//                                 </span>
-//                             </p>
-//                         }
-//                     />
-//                     {scream.body}
-//                 </Card>
-//             </div>
-//         );
-//     }
-// }

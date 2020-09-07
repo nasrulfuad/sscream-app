@@ -1,134 +1,116 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, Avatar, Form, Button, Input, List, Spin } from "antd";
 import { CommentOutlined, LikeOutlined, LikeFilled } from "@ant-design/icons";
 import InfiniteScroll from "react-infinite-scroller";
-import Comment from "./sub_components/Comment";
-import moment from "moment";
-import "../styles/Scream.css";
 
-function Scream({ scream }) {
-    let [comments, setComments] = useState([]);
-    const [isLike, setIsLike] = useState(false);
-    const [likes, setLikes] = useState(scream.likeCount);
-    const [isLoading, setIsLoading] = useState(false);
+export class ContentModal extends React.Component {
 
-    const onLike = () => {
-        setIsLike(true);
-        setLikes(1);
-    };
+  state = {
+    comments: [],
+    isLike: false,
+    likes: 0,
+    isLoading: false,
+  }
 
-    const onDisLike = () => {
-        setIsLike(false);
-        setLikes(0);
-    };
+  onLike = () => {
+      this.setState(prev => ({...prev, isLike: true, likes: 1}));
+  };
 
-    const likeBtn = isLike ? (
-        <LikeFilled
-            key="disLike"
-            onClick={onDisLike}
-            style={{ color: "#1890ff" }}
+   onDisLike = () => {
+    this.setState(prev => ({...prev, isLike: false, likes: 0}));
+
+  };
+
+  likeBtn = () => this.state.isLike ? (
+      <LikeFilled
+          key="disLike"
+          onClick={this.onDisLike}
+          style={{ color: "#1890ff" }}
+      />
+  ) : (
+      <LikeOutlined key="like" onClick={this.onLike} />
+  );
+
+  render() {
+    <>
+      <Card
+        actions={[
+          <span
+            style={{
+              width: "100%",
+              display: "block"
+            }}
+          >
+            {this.likeBtn} {this.state.likes}
+          </span>,
+          <span
+            style={{
+              width: "100%",
+              display: "block"
+            }}
+          >
+            <CommentOutlined style={{ fontSize: 20 }} key="comments" />{" "}
+            10
+          </span>
+        ]}
+      >
+        <Card.Meta
+          avatar={<Avatar src={scream.userImage} />}
+          title={
+            <p className="post__username">
+              @username
+              <span>a few moments ago</span>
+            </p>
+          }
         />
-    ) : (
-        <LikeOutlined key="like" onClick={onLike} />
-    );
-
-    const handleInfiniteOnLoad = () => {
-        setIsLoading(true);
-        // fetchComments(data => {
-        //     comments = comments.concat(data);
-        //     setComments(comments);
-        //     setIsLoading(false);
-        // });
-    };
-
-    return (
-        <div style={{ marginTop: 50 }}>
-            <Card
-                actions={[
-                    <span
-                        onClick={() => (isLike ? onDisLike() : onLike())}
-                        style={{
-                            width: "100%",
-                            display: "block",
-                        }}
-                    >
-                        {likeBtn} {likes}
-                    </span>,
-                    <span
-                        style={{
-                            width: "100%",
-                            display: "block",
-                        }}
-                    >
-                        <CommentOutlined
-                            style={{ fontSize: 20 }}
-                            key="comments"
-                        />{" "}
-                        {scream.commentCount}
-                    </span>,
-                ]}
+        Hallo guyss, selamat pagi!!
+      </Card>
+      <Card
+        style={{
+          borderTop: 0
+        }}
+        className="post__commentCard"
+      >
+        <div className="post__commentList">
+          <InfiniteScroll
+            initialLoad={false}
+            pageStart={0}
+            loadMore={this.handleInfiniteOnLoad}
+            hasMore={true}
+            useWindow={false}
+          >
+            <List
+              dataSource={this.state.comments}
+              renderItem={(item) => (
+                <List.Item>
+                  <Comment item={item} />
+                </List.Item>
+              )}
             >
-                <Card.Meta
-                    avatar={<Avatar src={scream.userImage} />}
-                    title={
-                        <p className="post__username">
-                            {scream.userHandle}{" "}
-                            <span>
-                                {moment(scream.createdAt).format("h:mmA")}
-                            </span>
-                        </p>
-                    }
-                />
-                {scream.body}
-            </Card>
-            <Card
-                style={{
-                    borderTop: 0,
-                }}
-                className="post__commentCard"
-            >
-                <div className="post__commentList">
-                    <InfiniteScroll
-                        initialLoad={false}
-                        pageStart={0}
-                        loadMore={handleInfiniteOnLoad}
-                        hasMore={true}
-                        useWindow={false}
-                    >
-                        <List
-                            dataSource={comments}
-                            renderItem={item => (
-                                <List.Item>
-                                    <Comment item={item} />
-                                </List.Item>
-                            )}
-                        >
-                            {isLoading && (
-                                <div
-                                    style={{
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    <Spin />
-                                </div>
-                            )}
-                        </List>
-                    </InfiniteScroll>
+              {this.state.isLoading && (
+                <div
+                  style={{
+                    textAlign: "center"
+                  }}
+                >
+                  <Spin />
                 </div>
-
-                <Form>
-                    <Form.Item>
-                        <Input.TextArea rows={4} />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button htmlType="submit" type="primary" block>
-                            Add Comment
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Card>
+              )}
+            </List>
+          </InfiniteScroll>
         </div>
-    );
-}
 
-export default Scream;
+        <Form>
+          <Form.Item>
+            <Input.TextArea rows={4} />
+          </Form.Item>
+          <Form.Item>
+            <Button htmlType="submit" type="primary" block>
+              Add Comment
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
+    </>;
+  }
+}

@@ -21,6 +21,8 @@ export class FormScream extends React.Component {
             type: Types.ADD_SCREAM,
             payload: response.data,
         });
+
+        this.setState({ isLoading: false });
         this.formRef.current.resetFields();
         message.success("Scream posted successfully!", 3);
     }

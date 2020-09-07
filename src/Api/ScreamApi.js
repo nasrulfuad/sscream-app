@@ -10,6 +10,15 @@ export class ScreamApi {
         }
     }
 
+    static async getScream(screamId) {
+        try {
+            return (await axios.get(`screams/${screamId}`)).data;
+        } catch({ response }) {
+            console.log(response.data);
+            return response.data;
+        }
+    }
+
     static async addScream(data) {
         try {
             return (await axios.post("screams", data)).data;
@@ -18,6 +27,16 @@ export class ScreamApi {
             return response.data;
         }
     }
+
+    static async commentScream(screamId, body) {
+        try {
+            return (await axios.post(`screams/${screamId}/comments`, body)).data;
+        } catch({ response }) {
+            console.log(response.data);
+            return response.data;
+        }
+    }
+
 
     static async likeScream(screamId) {
         try {
