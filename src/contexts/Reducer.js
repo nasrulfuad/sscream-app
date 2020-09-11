@@ -89,6 +89,26 @@ export function Reducer(state, action) {
                 ]
             }
 
+        case Types.SET_LIKE:
+            let index = state.screams.findIndex(el => el.screamId === action.payload.screamId);
+            let newScreams = state.screams;
+            newScreams[index] = {...newScreams[index], likeCount: action.payload.likeCount }
+            return {
+                ...state,
+                likes: [action.payload, ...state.likes],
+                screams: newScreams
+            }
+
+        case Types.SET_UNLIKE:
+            let indexUnlike = state.screams.findIndex(el => el.screamId === action.payload.screamId);
+            let newScreamsUnlike = state.screams;
+            newScreamsUnlike[indexUnlike] = {...newScreamsUnlike[indexUnlike], likeCount: action.payload.likeCount }
+            return {
+                ...state,
+                likes: state.likes.filter(like => like.screamId !== action.payload),
+                screams: newScreamsUnlike,
+            }
+
         case Types.DELETE_SCREAM:
             return {
                 ...state,

@@ -8,6 +8,8 @@ export class Types {
     static SET_SCREAMS = "SET_SCREAMS";
     static UNSET_SCREAMS = "UNSET_SCREAMS";
     static ADD_SCREAM = "ADD_SCREAM";
+    static SET_LIKE = "SET_LIKE";
+    static SET_UNLIKE = "SET_UNLIKE";
     static DELETE_SCREAM = "DELETE_SCREAM";
     /* Modal Scream*/
     static SHOW_MODAL_SCREAM = "SHOW_MODAL_SCREAM";

@@ -55,7 +55,7 @@ export class EditProfile extends React.Component {
                               <Form.Item name="location" label="Location" rules={rules.location}>
                                 <Input.TextArea />
                               </Form.Item>
-                              <Form.Item wrapperCol={{ ...layout.wrapperColBtn }}>
+                              <Form.Item wrapperCol={{ ...layout.wrappercolbtn }}>
                                 <Button type="primary" htmlType="submit" block loading={this.state.isBtnLoading}>
                                   Submit
                                 </Button>
@@ -91,7 +91,7 @@ const responsive = {
 const layout = {
     labelCol: { span: 5 },
     wrapperCol: { span: 16 },
-    wrapperColBtn: {
+    wrappercolbtn: {
         md: {
             span: 16,
             offset: 5

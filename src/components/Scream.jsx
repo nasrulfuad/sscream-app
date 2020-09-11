@@ -12,30 +12,43 @@ const ScreamFunc = ({ scream, onShowModalScream, isModal }) => {
     const [likes, setLikes] = useState(scream.likeCount);
 
     useEffect(() => {
-        const liked = store.likes.find(like => like.screamId === scream.screamId);
-
-        if (store.likes && liked) {
-            setIsLiked(true);
+        async function checkLike() {
+            const liked = await store.likes.find(like => like.screamId === scream.screamId);
+            if (store.likes && liked) return setIsLiked(true);
+            setIsLiked(false);
         }
-    }, [store, scream]);
+        checkLike();
+    }, []);
 
     const onLike = async () => {
         if (!isAuthenticated()) return;
 
         const response = await ScreamApi.likeScream(scream.screamId);
-        if (response.status === "Ok") {
-            setIsLiked(true);
-            setLikes(response.data.likeCount);
-        }
+        if (response.status !== "Ok") return message.error("Something went wrong!", 3);
+
+        setIsLiked(true);
+        setLikes(response.data.likeCount);
+
+        await dispatch({
+            type: Types.SET_LIKE,
+            payload: response.data
+        });
+        console.log(response);
     }
 
     const onDisLike = async () => {
         if (!isAuthenticated()) return;
         const response = await ScreamApi.unLikeScream(scream.screamId);
-        if (response.status === "Ok") {
-            setIsLiked(false);
-            setLikes(response.data.likeCount);
-        }
+        if (response.status !== "Ok") return message.error("Something went wrong!", 3);
+
+        setIsLiked(false);
+        setLikes(response.data.likeCount);
+
+        await dispatch({
+            type: Types.SET_UNLIKE,
+            payload: response.data
+        });
+        console.log(response);
     }
 
     const onDelete = async () => {
